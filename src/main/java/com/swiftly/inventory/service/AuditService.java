@@ -10,25 +10,32 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuditService {
     @Autowired
-    InventoryRepository inventoryRepostory;
+    InventoryRepository inventoryRepository;
     @Autowired
-    AuditRepository auditRepostory;
-    public void setLogs(String sku, String action,Integer numOfChanges) {
-        InventoryAudit inventoryAudit = new InventoryAudit();
-        inventoryAudit.setSku(sku);
-        inventoryAudit.setActionType(action);
-        inventoryAudit.setQuantityChanged(numOfChanges);
-        auditRepostory.save(inventoryAudit);
+    AuditRepository auditRepository;
+
+    public void setLogs(String sku, String action, Integer qty, String user) {
+        InventoryAudit log = InventoryAudit.builder()
+                .sku(sku)
+                .actionType(action)
+                .quantityChanged(qty)
+                .triggeredBy(user)
+                .build();
+        auditRepository.save(log);
     }
 
     public String reconcile(String sku, Integer physicalCount) {
-        Inventory systemItem = inventoryRepostory.findBySku(sku);
+        Inventory systemItem = inventoryRepository.findBySku(sku)
+                .orElseThrow(() -> new RuntimeException("SKU Not Found"));
+                
         int systemCount = systemItem.getAvailableQuantity() + systemItem.getReservedQuantity();
-        if(systemCount == physicalCount)    return "MATCH: SYSTEM AND PHYSICAL COUNTS AGREE";
-        else{
+        
+        if (systemCount == physicalCount) {
+            return "MATCH: System and Physical counts agree.";
+        } else {
             int diff = physicalCount - systemCount;
-            setLogs(sku,"AUDIT_CORRECTION",diff);
-            return  "MISMATCHED DETECTED: System : "+systemCount+" Physical : "+physicalCount;
+            setLogs(sku, "AUDIT_CORRECTION", diff, "AUDIT_ADMIN");
+            return "MISMATCH DETECTED: System=" + systemCount + " Physical=" + physicalCount;
         }
     }
 }
