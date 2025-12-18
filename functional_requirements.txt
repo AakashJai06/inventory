@@ -235,3 +235,18 @@ Help you defend each requirement in viva
 
 
 Just tell me 👍
+
+1. Web-Based Content Authoring Interface
+In future enhancements, a web-based user interface can be introduced to allow administrators and content authors to create, edit, review, and publish documentation through a visual editor instead of relying only on APIs.
+
+
+2. Caching for Improved Performance
+The system can be extended with caching mechanisms to reduce response time and improve performance for frequently accessed documentation content.
+
+
+3. Keyword-Based Content Search
+Advanced search functionality can be added to allow users and administrators to search documentation based on keywords, tags, or content sections.
+
+
+4. Cloud-Based File Storage Support
+The system can be enhanced to support storage and management of various file types such as images, PDFs, and other documents using cloud storage services such as Google Cloud Platform (GCP).
