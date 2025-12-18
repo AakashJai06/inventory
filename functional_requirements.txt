@@ -341,3 +341,23 @@ Or review your entire SRS for consistency.
 
 
 Just tell me 👍
+
+3.1 Scalability & Performance
+
+The system shall support concurrent access from multiple client applications.
+
+The system shall provide acceptable response times for documentation retrieval requests.
+
+The system shall be capable of handling an increasing number of documentation items and versions without performance degradation.
+
+
+
+---
+
+3.2 Maintainability and Modularity
+
+The system shall be modular to allow independent updates and enhancements.
+
+The system shall support changes to documentation templates without affecting existing published content.
+
+The system shall be easy to maintain and extend with minimal impact on existing functionalities.
