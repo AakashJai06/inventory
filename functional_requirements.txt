@@ -250,3 +250,94 @@ Advanced search functionality can be added to allow users and administrators to 
 
 4. Cloud-Based File Storage Support
 The system can be enhanced to support storage and management of various file types such as images, PDFs, and other documents using cloud storage services such as Google Cloud Platform (GCP).
+
+
+Got it 👍 — I’ll now write a longer, fuller Introduction, but still in the same academic SRS style as the PDF (formal, descriptive, paragraph-based, not bullet-heavy, no implementation talk).
+
+You can safely use this for submission and viva.
+
+
+---
+
+1. Introduction
+
+1.1 System Description
+
+Modern software applications require users to understand features, configurations, and workflows while actively using the application. Traditional documentation systems often redirect users to external websites or manuals, which disrupts user experience and reduces productivity. To address this limitation, the Contextual Content Management System (CCMS) is designed as an API-based documentation platform that enables applications to display relevant documentation within the application itself.
+
+The CCMS provides a centralized mechanism for creating, managing, and delivering documentation based on application context. Documentation is served dynamically through exposed APIs using predefined context or asset identifiers, allowing applications to fetch and display appropriate help content such as descriptions, instructions, or examples at the point of use. This approach ensures that users receive accurate and relevant documentation without leaving the application interface.
+
+The system supports structured and hierarchical documentation, enabling content to be organized into sections and subsections based on predefined templates. It also incorporates version control and workflow management to ensure that documentation changes are properly reviewed, validated, and published. By separating content management from content presentation, the CCMS promotes reuse, consistency, and maintainability of documentation across multiple applications.
+
+
+---
+
+1.2 System Scope
+
+The scope of the Contextual Content Management System includes managing documentation content, associated metadata, and lifecycle states through a centralized platform. The system supports creation, modification, review, versioning, and publication of documentation that can be consumed by different client applications through secure API interfaces.
+
+Initially, the system focuses on exposing APIs for documentation retrieval and management, without providing a graphical user interface. Client applications integrate with the CCMS by supplying valid context identifiers to retrieve relevant documentation in supported formats. The system ensures that only validated and published documentation is made available for consumption.
+
+The CCMS is designed to support reuse of documentation across multiple application contexts, controlled publishing workflows, audit logging of documentation changes, and structured validation using templates. Future enhancements may extend the system to include a web-based content authoring interface, advanced search, caching mechanisms, and cloud-based storage for supporting various file types.
+
+
+---
+
+1.3 Intended Audience
+
+This Software Requirements Specification document is intended for developers, system architects, testers, and project managers involved in the design and development of the Contextual Content Management System. It also serves as a reference for academic evaluators, stakeholders, and reviewers who require a clear understanding of the system’s functional and non-functional requirements.
+
+The document provides a detailed description of the system behavior, constraints, and expectations to ensure a shared understanding among all parties involved in the project.
+
+
+---
+
+1.4 Definitions, Acronyms, and Abbreviations
+
+Term	Description
+
+CCMS	Contextual Content Management System
+API	Application Programming Interface
+Asset ID	Identifier representing a specific application context
+Content ID	Unique identifier for a documentation item
+Metadata	Descriptive information about documentation content
+Draft	Unpublished state of documentation
+Published	Approved documentation accessible to applications
+Version	A specific revision of documentation content
+
+
+
+---
+
+1.5 Assumptions and Dependencies
+
+The system assumes that client applications are capable of invoking REST-based APIs and supplying valid context identifiers to retrieve documentation. It is assumed that users interacting with the CMS for content management are authenticated and authorized according to their assigned roles.
+
+The system depends on reliable network connectivity between client applications and the CMS APIs. Documentation retrieval is expected to function independently of optional components such as search or AI-assisted content generation. Any future enhancements, including user interface components or cloud storage integration, are considered extensions beyond the initial system scope.
+
+
+---
+
+✅ Why this is correct for your PDF
+
+Matches academic SRS writing style
+
+Detailed but not implementation-heavy
+
+Uses paragraph-based explanation, not bullet overload
+
+Clearly explains problem, solution, scope, and assumptions
+
+Safe for college evaluation and viva
+
+
+If you want next, I can:
+
+Align this even more closely line-by-line with your exact PDF wording,
+
+Rewrite System Scope to be even more formal,
+
+Or review your entire SRS for consistency.
+
+
+Just tell me 👍
