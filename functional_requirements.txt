@@ -1,0 +1,237 @@
+Below is a clean, rewritten Functional Requirements section, written in the same style, structure, and tone as the PDF SRS you shared.
+It focuses strictly on WHAT the system does, with Acceptance Criteria, and avoids implementation details.
+
+You can paste this directly into your SRS.
+
+
+---
+
+2. Functional Requirements
+
+2.1 User Authentication
+
+The system shall allow authorized users to log in to the CMS to perform content authoring, review, and administrative activities.
+
+Acceptance Criteria:
+
+1. Users must provide valid credentials to log in.
+
+
+2. Only authenticated users can access CMS functionalities.
+
+
+3. User role information must be available after successful login.
+
+
+
+
+---
+
+2.2 Template Management
+
+The system shall allow administrators to create and manage documentation templates that define the structure of content.
+
+Acceptance Criteria:
+
+1. Only authorized users can create, update, or delete templates.
+
+
+2. Each template must have a unique name or identifier.
+
+
+3. Templates may define mandatory and optional sections.
+
+
+4. Templates already associated with published content must not invalidate existing content.
+
+
+
+
+---
+
+2.3 Documentation Creation and Editing
+
+The system shall allow content authors to create and edit documentation using predefined templates.
+
+Acceptance Criteria:
+
+1. Documentation must be associated with a valid template.
+
+
+2. Documentation can be saved as a draft with incomplete content.
+
+
+3. Content must follow the structure defined by the selected template.
+
+
+4. Any modification to documentation must create a new version.
+
+
+
+
+---
+
+2.4 Documentation Version Management
+
+The system shall maintain version history for all documentation.
+
+Acceptance Criteria:
+
+1. Each documentation update must result in a new version.
+
+
+2. Previous versions must remain accessible for reference.
+
+
+3. Only one version of a document can be in the published state at a time.
+
+
+4. The system must support rollback to a previous version.
+
+
+
+
+---
+
+2.5 Review and Approval Workflow
+
+The system shall support a controlled workflow for reviewing and publishing documentation.
+
+Acceptance Criteria:
+
+1. Documentation must move through defined states such as Draft, In Review, Published, and Deprecated.
+
+
+2. Only authorized users can approve or reject documentation.
+
+
+3. Documentation can be published only when all required metadata exists.
+
+
+4. Rejected documentation must return to the draft state.
+
+
+
+
+---
+
+2.6 Contextual Documentation Retrieval
+
+The system shall expose APIs that allow client applications to retrieve documentation based on context.
+
+Acceptance Criteria:
+
+1. Applications must request documentation using a valid context or asset identifier.
+
+
+2. Only published documentation must be returned to client applications.
+
+
+3. If no documentation exists for the requested context, an appropriate response must be returned.
+
+
+
+
+---
+
+2.7 Format-Based Content Delivery
+
+The system shall return documentation in the format requested by the client application.
+
+Acceptance Criteria:
+
+1. Supported formats shall include HTML, JSON, and Markdown.
+
+
+2. The client must be able to specify the required format.
+
+
+3. The system must return content in the requested format if available.
+
+
+
+
+---
+
+2.8 AI-Assisted Documentation Generation
+
+The system shall allow users to generate draft documentation using AI from uploaded files or URLs.
+
+Acceptance Criteria:
+
+1. AI-generated documentation must be created only as a draft.
+
+
+2. AI-generated content must not be published automatically.
+
+
+3. Users must be able to edit AI-generated drafts before review.
+
+
+
+
+---
+
+2.9 Audit Logging
+
+The system shall maintain an audit trail of documentation-related actions.
+
+Acceptance Criteria:
+
+1. Actions such as create, edit, publish, rollback, and delete must be recorded.
+
+
+2. Audit records must include the user, action performed, and timestamp.
+
+
+3. Audit logs must not be modifiable.
+
+
+
+
+---
+
+2.10 Documentation Visibility Control
+
+The system shall control visibility of documentation based on its status.
+
+Acceptance Criteria:
+
+1. Draft and in-review documentation must not be visible to client applications.
+
+
+2. Only published documentation must be accessible to end users.
+
+
+3. Deprecated documentation must not be returned for new requests.
+
+
+
+
+---
+
+✅ Why this fits your PDF perfectly
+
+Same numbering style
+
+Same simple language
+
+Includes Acceptance Criteria
+
+Focuses on functional behavior only
+
+Easy for evaluators to follow
+
+
+If you want next, I can:
+
+Reduce this to a smaller module-only FR list
+
+Align it 1-to-1 with your project demo
+
+Convert it into use cases
+
+Help you defend each requirement in viva
+
+
+Just tell me 👍
