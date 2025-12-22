@@ -1,0 +1,244 @@
+Perfect 👍 — you want the DB design written in the SAME FORMAT & STYLE as the image
+(i.e., table-wise schema description, not ER, not explanation).
+Below is your Contextual CMS database schema, written exactly like that format so you can paste it into a document or PPT.
+DB SCHEMA DETAILS
+Schema Name: CCMS_DB
+Table: users
+Description: Stores information about CMS users such as authors, reviewers, and administrators.
+ID
+COLUMN NAME
+TYPE
+CONSTRAINT
+DESCRIPTION
+1
+user_id
+INTEGER
+PRIMARY KEY
+Unique identifier for user
+2
+username
+VARCHAR(100)
+UNIQUE, NOT NULL
+Username of the user
+3
+role
+VARCHAR(50)
+NOT NULL
+Role of the user (Author, Reviewer, Admin)
+4
+created_at
+TIMESTAMP
+NOT NULL
+Account creation timestamp
+Table: templates
+Description: Stores logical template information.
+ID
+COLUMN NAME
+TYPE
+CONSTRAINT
+DESCRIPTION
+1
+template_id
+INTEGER
+PRIMARY KEY
+Unique identifier for template
+2
+template_name
+VARCHAR(100)
+UNIQUE, NOT NULL
+Name of the template
+3
+created_at
+TIMESTAMP
+NOT NULL
+Template creation date
+Table: template_versions
+Description: Stores versioned templates. Each template update creates a new version.
+ID
+COLUMN NAME
+TYPE
+CONSTRAINT
+DESCRIPTION
+1
+template_version_id
+INTEGER
+PRIMARY KEY
+Unique template version ID
+2
+template_id
+INTEGER
+FOREIGN KEY
+References templates(template_id)
+3
+version_number
+INTEGER
+NOT NULL
+Version number of template
+4
+structure_json
+JSONB
+NOT NULL
+Template structure definition
+5
+created_at
+TIMESTAMP
+NOT NULL
+Version creation timestamp
+Table: contents
+Description: Stores logical documentation entities.
+ID
+COLUMN NAME
+TYPE
+CONSTRAINT
+DESCRIPTION
+1
+content_id
+INTEGER
+PRIMARY KEY
+Unique documentation identifier
+2
+template_id
+INTEGER
+FOREIGN KEY
+References templates(template_id)
+3
+template_version_id
+INTEGER
+FOREIGN KEY
+Template version used
+4
+created_by
+INTEGER
+FOREIGN KEY
+References users(user_id)
+5
+created_at
+TIMESTAMP
+NOT NULL
+Content creation date
+Table: content_versions
+Description: Stores draft and published versions of documentation.
+ID
+COLUMN NAME
+TYPE
+CONSTRAINT
+DESCRIPTION
+1
+content_version_id
+INTEGER
+PRIMARY KEY
+Unique version identifier
+2
+content_id
+INTEGER
+FOREIGN KEY
+References contents(content_id)
+3
+version_number
+INTEGER
+NOT NULL
+Version number
+4
+status
+VARCHAR(20)
+NOT NULL
+DRAFT / REVIEW / PUBLISHED / DEPRECATED
+5
+content_json
+JSONB
+NOT NULL
+Documentation content
+6
+created_by
+INTEGER
+FOREIGN KEY
+User who created version
+7
+created_at
+TIMESTAMP
+NOT NULL
+Version creation time
+Table: asset_mappings
+Description: Maps application Asset IDs to documentation content.
+ID
+COLUMN NAME
+TYPE
+CONSTRAINT
+DESCRIPTION
+1
+asset_id
+VARCHAR(100)
+PRIMARY KEY
+Application context identifier
+2
+content_id
+INTEGER
+FOREIGN KEY
+References contents(content_id)
+Table: session_mappings
+Description: Supports auto-scroll functionality using session identifiers.
+ID
+COLUMN NAME
+TYPE
+CONSTRAINT
+DESCRIPTION
+1
+session_id
+VARCHAR(100)
+PRIMARY KEY
+Session identifier
+2
+content_id
+INTEGER
+FOREIGN KEY
+References contents(content_id)
+3
+section_path
+VARCHAR(255)
+NOT NULL
+Path to section/subsection
+Table: audit_logs
+Description: Stores audit trail for content lifecycle actions.
+ID
+COLUMN NAME
+TYPE
+CONSTRAINT
+DESCRIPTION
+1
+audit_id
+INTEGER
+PRIMARY KEY
+Unique audit record ID
+2
+content_id
+INTEGER
+FOREIGN KEY
+References contents(content_id)
+3
+action
+VARCHAR(50)
+NOT NULL
+Action performed
+4
+performed_by
+INTEGER
+FOREIGN KEY
+References users(user_id)
+5
+performed_at
+TIMESTAMP
+NOT NULL
+Action timestamp
+🔑 Key Notes (you can say this in viva)
+One content → multiple versions
+Only one active draft enforced logically
+Templates are versioned
+Content is tied to template version
+AssetId → ContentId is many-to-one
+SessionId enables auto-scroll
+If you want next:
+I can remove JSONB and make it fully relational (exam-friendly)
+Convert this into DDL SQL
+Make a diagram explanation
+Shorten it to only 4 core tables for MVP
+Just tell me 👍
