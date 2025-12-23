@@ -1,10 +1,16 @@
-Perfect 👍 — you want the DB design written in the SAME FORMAT & STYLE as the image
-(i.e., table-wise schema description, not ER, not explanation).
-Below is your Contextual CMS database schema, written exactly like that format so you can paste it into a document or PPT.
-DB SCHEMA DETAILS
+Perfect — below is the UPDATED schema design, aligned with everything you finalized:
+✔ Templates define rules, not fixed sections
+✔ Repeatable sections allowed
+✔ Section IDs are content-level, not template-level
+✔ Session IDs point to content sections
+✔ Template versioning is non-retroactive
+✔ One active draft per content
+✔ AssetId → ContentId many-to-one
+I’m giving this in the same table-style schema format you asked earlier (document / PPT ready).
+📦 UPDATED DATABASE SCHEMA
 Schema Name: CCMS_DB
 Table: users
-Description: Stores information about CMS users such as authors, reviewers, and administrators.
+Description: Stores CMS users such as authors, reviewers, and administrators.
 ID
 COLUMN NAME
 TYPE
@@ -14,24 +20,24 @@ DESCRIPTION
 user_id
 INTEGER
 PRIMARY KEY
-Unique identifier for user
+Unique user identifier
 2
 username
 VARCHAR(100)
 UNIQUE, NOT NULL
-Username of the user
+Username
 3
 role
 VARCHAR(50)
 NOT NULL
-Role of the user (Author, Reviewer, Admin)
+User role
 4
 created_at
 TIMESTAMP
 NOT NULL
-Account creation timestamp
+User creation timestamp
 Table: templates
-Description: Stores logical template information.
+Description: Stores logical template definitions.
 ID
 COLUMN NAME
 TYPE
@@ -41,19 +47,19 @@ DESCRIPTION
 template_id
 INTEGER
 PRIMARY KEY
-Unique identifier for template
+Template identifier
 2
 template_name
 VARCHAR(100)
 UNIQUE, NOT NULL
-Name of the template
+Template name
 3
 created_at
 TIMESTAMP
 NOT NULL
-Template creation date
+Creation timestamp
 Table: template_versions
-Description: Stores versioned templates. Each template update creates a new version.
+Description: Stores versioned template schemas and hierarchy rules.
 ID
 COLUMN NAME
 TYPE
@@ -63,7 +69,7 @@ DESCRIPTION
 template_version_id
 INTEGER
 PRIMARY KEY
-Unique template version ID
+Template version ID
 2
 template_id
 INTEGER
@@ -73,19 +79,20 @@ References templates(template_id)
 version_number
 INTEGER
 NOT NULL
-Version number of template
+Template version number
 4
-structure_json
+schema_json
 JSONB
 NOT NULL
-Template structure definition
+Hierarchy rules & allowed section types
 5
 created_at
 TIMESTAMP
 NOT NULL
-Version creation timestamp
+Version creation time
+📌 Defines structure rules, repeatable section types, mandatory section types.
 Table: contents
-Description: Stores logical documentation entities.
+Description: Represents a logical documentation entity.
 ID
 COLUMN NAME
 TYPE
@@ -95,7 +102,7 @@ DESCRIPTION
 content_id
 INTEGER
 PRIMARY KEY
-Unique documentation identifier
+Documentation identifier
 2
 template_id
 INTEGER
@@ -105,7 +112,7 @@ References templates(template_id)
 template_version_id
 INTEGER
 FOREIGN KEY
-Template version used
+Template version bound to content
 4
 created_by
 INTEGER
@@ -115,7 +122,7 @@ References users(user_id)
 created_at
 TIMESTAMP
 NOT NULL
-Content creation date
+Creation time
 Table: content_versions
 Description: Stores draft and published versions of documentation.
 ID
@@ -127,7 +134,7 @@ DESCRIPTION
 content_version_id
 INTEGER
 PRIMARY KEY
-Unique version identifier
+Version identifier
 2
 content_id
 INTEGER
@@ -152,14 +159,53 @@ Documentation content
 created_by
 INTEGER
 FOREIGN KEY
-User who created version
+References users(user_id)
 7
 created_at
 TIMESTAMP
 NOT NULL
 Version creation time
+📌 Only ONE active DRAFT per content enforced logically.
+Table: content_sections
+Description: Stores dynamically created content-level sections and subsections.
+ID
+COLUMN NAME
+TYPE
+CONSTRAINT
+DESCRIPTION
+1
+section_id
+VARCHAR(100)
+PRIMARY KEY
+Unique content-level section ID
+2
+content_id
+INTEGER
+FOREIGN KEY
+References contents(content_id)
+3
+section_type
+VARCHAR(50)
+NOT NULL
+Section type defined in template
+4
+parent_section_id
+VARCHAR(100)
+FOREIGN KEY
+Self-reference for hierarchy
+5
+section_order
+INTEGER
+NOT NULL
+Ordering within parent
+6
+created_at
+TIMESTAMP
+NOT NULL
+Creation time
+📌 Allows unlimited repeatable sections while enforcing hierarchy.
 Table: asset_mappings
-Description: Maps application Asset IDs to documentation content.
+Description: Maps application contexts to documentation.
 ID
 COLUMN NAME
 TYPE
@@ -175,8 +221,9 @@ content_id
 INTEGER
 FOREIGN KEY
 References contents(content_id)
+📌 Many AssetIds → One ContentId supported.
 Table: session_mappings
-Description: Supports auto-scroll functionality using session identifiers.
+Description: Maps session identifiers to content sections for navigation.
 ID
 COLUMN NAME
 TYPE
@@ -188,17 +235,18 @@ VARCHAR(100)
 PRIMARY KEY
 Session identifier
 2
+section_id
+VARCHAR(100)
+FOREIGN KEY
+References content_sections(section_id)
+3
 content_id
 INTEGER
 FOREIGN KEY
 References contents(content_id)
-3
-section_path
-VARCHAR(255)
-NOT NULL
-Path to section/subsection
+📌 SessionId → Content Section → Auto-scroll handled by UI.
 Table: audit_logs
-Description: Stores audit trail for content lifecycle actions.
+Description: Maintains audit trail of documentation lifecycle actions.
 ID
 COLUMN NAME
 TYPE
@@ -208,7 +256,7 @@ DESCRIPTION
 audit_id
 INTEGER
 PRIMARY KEY
-Unique audit record ID
+Audit record ID
 2
 content_id
 INTEGER
@@ -229,16 +277,28 @@ performed_at
 TIMESTAMP
 NOT NULL
 Action timestamp
-🔑 Key Notes (you can say this in viva)
-One content → multiple versions
-Only one active draft enforced logically
-Templates are versioned
-Content is tied to template version
-AssetId → ContentId is many-to-one
-SessionId enables auto-scroll
-If you want next:
-I can remove JSONB and make it fully relational (exam-friendly)
-Convert this into DDL SQL
-Make a diagram explanation
-Shorten it to only 4 core tables for MVP
+🔑 DESIGN GUARANTEES (Explain this confidently)
+Requirement
+How schema supports it
+Unlimited sections
+content_sections table
+Template rules only
+template_versions.schema_json
+No retro break
+content → template_version
+One active draft
+enforced at service + DB index
+Auto-scroll
+session_mappings
+Contextual help
+asset_mappings
+Version history
+content_versions
+🧠 ONE-LINE SUMMARY (MEMORIZE)
+“Templates define structural rules, content creates dynamic section instances, and session identifiers map to those sections for contextual navigation.”
+If you want next, I can:
+Provide DDL SQL for this exact schema
+Draw a simple ER explanation
+Optimize this for exam vs production
+Reduce to MVP-only tables
 Just tell me 👍
