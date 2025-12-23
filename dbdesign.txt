@@ -1,10 +1,11 @@
-Perfect 👍 — that actually simplifies the design and makes it cleaner and more realistic for an API-only system.
-Below is the UPDATED EXCEL FORMAT SCHEMA, with NO user table, and no user/role responsibility inside CCMS.
-All user/role handling is assumed to be external and passed to CCMS via headers/tokens.
-You can copy–paste directly into Excel.
-Each table = one sheet.
-📊 UPDATED EXCEL SCHEMA (API-ONLY CCMS)
-📄 Sheet 1: templates
+Got it 👍
+Below is the UPDATED DATABASE SCHEMA written specifically for Word (.docx) — table-by-table, clean, academic, and WITHOUT users table, since authentication & role management are external.
+You can directly copy–paste this into MS Word.
+Each table is formatted exactly how DB schema sections are usually shown in reports.
+Database Schema Design
+Contextual Content Management System (CCMS)
+Table: templates
+Description: Stores logical template definitions used to define documentation structure.
 Column Name
 Data Type
 Constraint
@@ -12,7 +13,7 @@ Description
 template_id
 INTEGER
 Primary Key
-Unique template identifier
+Unique identifier for template
 template_name
 VARCHAR(100)
 UNIQUE, NOT NULL
@@ -20,8 +21,9 @@ Name of the template
 created_at
 TIMESTAMP
 NOT NULL
-Template creation time
-📄 Sheet 2: template_versions
+Template creation timestamp
+Table: template_versions
+Description: Stores versioned template schemas defining hierarchy and validation rules.
 Column Name
 Data Type
 Constraint
@@ -29,7 +31,7 @@ Description
 template_version_id
 INTEGER
 Primary Key
-Unique template version ID
+Unique template version identifier
 template_id
 INTEGER
 Foreign Key
@@ -41,13 +43,13 @@ Template version number
 schema_json
 JSONB
 NOT NULL
-Hierarchy rules and allowed section types
+Template hierarchy and section rules
 created_at
 TIMESTAMP
 NOT NULL
-Version creation timestamp
-📌 Defines structure, hierarchy, repeatable section types, mandatory rules.
-📄 Sheet 3: contents
+Template version creation time
+Table: contents
+Description: Represents a logical documentation entity created using a specific template version.
 Column Name
 Data Type
 Constraint
@@ -55,7 +57,7 @@ Description
 content_id
 INTEGER
 Primary Key
-Documentation identifier
+Unique documentation identifier
 template_id
 INTEGER
 Foreign Key
@@ -67,8 +69,9 @@ Template version bound to content
 created_at
 TIMESTAMP
 NOT NULL
-Content creation time
-📄 Sheet 4: content_versions
+Content creation timestamp
+Table: content_versions
+Description: Stores different versions of documentation including drafts and published versions.
 Column Name
 Data Type
 Constraint
@@ -76,7 +79,7 @@ Description
 content_version_id
 INTEGER
 Primary Key
-Unique content version ID
+Unique content version identifier
 content_id
 INTEGER
 Foreign Key
@@ -84,7 +87,7 @@ References contents(content_id)
 version_number
 INTEGER
 NOT NULL
-Version number
+Version number of the content
 status
 VARCHAR(20)
 NOT NULL
@@ -96,9 +99,10 @@ Documentation content
 created_at
 TIMESTAMP
 NOT NULL
-Version creation time
-📌 Only ONE active DRAFT per content enforced logically.
-📄 Sheet 5: content_sections
+Version creation timestamp
+📌 Only one active DRAFT is allowed per content (enforced at service level / DB constraint).
+Table: content_sections
+Description: Stores dynamically created content-level sections and subsections.
 Column Name
 Data Type
 Constraint
@@ -106,7 +110,7 @@ Description
 section_id
 VARCHAR(100)
 Primary Key
-Unique content-level section ID
+Unique section identifier
 content_id
 INTEGER
 Foreign Key
@@ -122,13 +126,14 @@ Parent section identifier
 section_order
 INTEGER
 NOT NULL
-Ordering within parent section
+Order within parent section
 created_at
 TIMESTAMP
 NOT NULL
 Section creation time
-📌 Supports unlimited repeatable sections within template rules.
-📄 Sheet 6: asset_mappings
+📌 Supports unlimited repeatable sections while enforcing template hierarchy rules.
+Table: asset_mappings
+Description: Maps application context identifiers to documentation content.
 Column Name
 Data Type
 Constraint
@@ -141,8 +146,9 @@ content_id
 INTEGER
 Foreign Key
 References contents(content_id)
-📌 Many AssetIds → One ContentId supported.
-📄 Sheet 7: session_mappings
+📌 Supports many Asset IDs mapped to a single content.
+Table: session_mappings
+Description: Maps session identifiers to content sections for contextual navigation.
 Column Name
 Data Type
 Constraint
@@ -159,8 +165,9 @@ content_id
 INTEGER
 Foreign Key
 References contents(content_id)
-📌 SessionId maps to content-level sections for contextual navigation.
-📄 Sheet 8: audit_logs
+📌 Session identifiers enable auto-scroll and contextual navigation handled by client UI.
+Table: audit_logs
+Description: Maintains audit records for documentation lifecycle actions.
 Column Name
 Data Type
 Constraint
@@ -168,7 +175,7 @@ Description
 audit_id
 INTEGER
 Primary Key
-Audit record identifier
+Unique audit record identifier
 content_id
 INTEGER
 Foreign Key
@@ -181,29 +188,19 @@ performed_at
 TIMESTAMP
 NOT NULL
 Action timestamp
-📌 User identity can be captured as metadata if passed by external systems.
-✅ WHAT THIS DESIGN NOW GUARANTEES
-Requirement
-How it’s handled
-API-only system
-No user table
-External auth
-Assumed via headers/tokens
-Template version safety
-template_versions
-Unlimited sections
-content_sections
-Auto-scroll
-session_mappings
-Contextual help
-asset_mappings
-Version history
-content_versions
-🧠 ONE-LINE EXPLANATION (FOR REVIEW / VIVA)
-“The CCMS is API-only and content-focused; authentication and authorization are handled externally, while the CMS manages templates, versions, dynamic sections, and contextual navigation.”
+🔑 Key Design Notes (Optional section for Word)
+Templates define structure rules, not fixed content
+Content sections are dynamic and repeatable
+Section IDs are content-level
+Session IDs reference sections for contextual navigation
+Template versions prevent retroactive breaking
+Asset IDs enable context-based content retrieval
+User and role management is handled by an external system
+🧠 One-line Summary (Viva-friendly)
+“The CCMS stores template rules, versioned content, dynamic sections, and context mappings, while authentication and authorization are handled externally.”
 If you want next, I can:
-Provide DDL SQL for this exact schema
-Optimize indexes for read-heavy usage
-Reduce this to MVP tables only
-Prepare diagram explanation in words
+Convert this into proper SQL DDL
+Reduce it to minimum tables for MVP
+Add sample rows for demo
+Align this exactly with your SRS section numbering
 Just tell me 👍
