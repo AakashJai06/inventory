@@ -1,304 +1,209 @@
-Perfect — below is the UPDATED schema design, aligned with everything you finalized:
-✔ Templates define rules, not fixed sections
-✔ Repeatable sections allowed
-✔ Section IDs are content-level, not template-level
-✔ Session IDs point to content sections
-✔ Template versioning is non-retroactive
-✔ One active draft per content
-✔ AssetId → ContentId many-to-one
-I’m giving this in the same table-style schema format you asked earlier (document / PPT ready).
-📦 UPDATED DATABASE SCHEMA
-Schema Name: CCMS_DB
-Table: users
-Description: Stores CMS users such as authors, reviewers, and administrators.
-ID
-COLUMN NAME
-TYPE
-CONSTRAINT
-DESCRIPTION
-1
-user_id
-INTEGER
-PRIMARY KEY
-Unique user identifier
-2
-username
-VARCHAR(100)
-UNIQUE, NOT NULL
-Username
-3
-role
-VARCHAR(50)
-NOT NULL
-User role
-4
-created_at
-TIMESTAMP
-NOT NULL
-User creation timestamp
-Table: templates
-Description: Stores logical template definitions.
-ID
-COLUMN NAME
-TYPE
-CONSTRAINT
-DESCRIPTION
-1
+Perfect 👍 — that actually simplifies the design and makes it cleaner and more realistic for an API-only system.
+Below is the UPDATED EXCEL FORMAT SCHEMA, with NO user table, and no user/role responsibility inside CCMS.
+All user/role handling is assumed to be external and passed to CCMS via headers/tokens.
+You can copy–paste directly into Excel.
+Each table = one sheet.
+📊 UPDATED EXCEL SCHEMA (API-ONLY CCMS)
+📄 Sheet 1: templates
+Column Name
+Data Type
+Constraint
+Description
 template_id
 INTEGER
-PRIMARY KEY
-Template identifier
-2
+Primary Key
+Unique template identifier
 template_name
 VARCHAR(100)
 UNIQUE, NOT NULL
-Template name
-3
+Name of the template
 created_at
 TIMESTAMP
 NOT NULL
-Creation timestamp
-Table: template_versions
-Description: Stores versioned template schemas and hierarchy rules.
-ID
-COLUMN NAME
-TYPE
-CONSTRAINT
-DESCRIPTION
-1
+Template creation time
+📄 Sheet 2: template_versions
+Column Name
+Data Type
+Constraint
+Description
 template_version_id
 INTEGER
-PRIMARY KEY
-Template version ID
-2
+Primary Key
+Unique template version ID
 template_id
 INTEGER
-FOREIGN KEY
+Foreign Key
 References templates(template_id)
-3
 version_number
 INTEGER
 NOT NULL
 Template version number
-4
 schema_json
 JSONB
 NOT NULL
-Hierarchy rules & allowed section types
-5
+Hierarchy rules and allowed section types
 created_at
 TIMESTAMP
 NOT NULL
-Version creation time
-📌 Defines structure rules, repeatable section types, mandatory section types.
-Table: contents
-Description: Represents a logical documentation entity.
-ID
-COLUMN NAME
-TYPE
-CONSTRAINT
-DESCRIPTION
-1
+Version creation timestamp
+📌 Defines structure, hierarchy, repeatable section types, mandatory rules.
+📄 Sheet 3: contents
+Column Name
+Data Type
+Constraint
+Description
 content_id
 INTEGER
-PRIMARY KEY
+Primary Key
 Documentation identifier
-2
 template_id
 INTEGER
-FOREIGN KEY
+Foreign Key
 References templates(template_id)
-3
 template_version_id
 INTEGER
-FOREIGN KEY
+Foreign Key
 Template version bound to content
-4
-created_by
-INTEGER
-FOREIGN KEY
-References users(user_id)
-5
 created_at
 TIMESTAMP
 NOT NULL
-Creation time
-Table: content_versions
-Description: Stores draft and published versions of documentation.
-ID
-COLUMN NAME
-TYPE
-CONSTRAINT
-DESCRIPTION
-1
+Content creation time
+📄 Sheet 4: content_versions
+Column Name
+Data Type
+Constraint
+Description
 content_version_id
 INTEGER
-PRIMARY KEY
-Version identifier
-2
+Primary Key
+Unique content version ID
 content_id
 INTEGER
-FOREIGN KEY
+Foreign Key
 References contents(content_id)
-3
 version_number
 INTEGER
 NOT NULL
 Version number
-4
 status
 VARCHAR(20)
 NOT NULL
 DRAFT / REVIEW / PUBLISHED / DEPRECATED
-5
 content_json
 JSONB
 NOT NULL
 Documentation content
-6
-created_by
-INTEGER
-FOREIGN KEY
-References users(user_id)
-7
 created_at
 TIMESTAMP
 NOT NULL
 Version creation time
 📌 Only ONE active DRAFT per content enforced logically.
-Table: content_sections
-Description: Stores dynamically created content-level sections and subsections.
-ID
-COLUMN NAME
-TYPE
-CONSTRAINT
-DESCRIPTION
-1
+📄 Sheet 5: content_sections
+Column Name
+Data Type
+Constraint
+Description
 section_id
 VARCHAR(100)
-PRIMARY KEY
+Primary Key
 Unique content-level section ID
-2
 content_id
 INTEGER
-FOREIGN KEY
+Foreign Key
 References contents(content_id)
-3
 section_type
 VARCHAR(50)
 NOT NULL
 Section type defined in template
-4
 parent_section_id
 VARCHAR(100)
-FOREIGN KEY
-Self-reference for hierarchy
-5
+Foreign Key (Self)
+Parent section identifier
 section_order
 INTEGER
 NOT NULL
-Ordering within parent
-6
+Ordering within parent section
 created_at
 TIMESTAMP
 NOT NULL
-Creation time
-📌 Allows unlimited repeatable sections while enforcing hierarchy.
-Table: asset_mappings
-Description: Maps application contexts to documentation.
-ID
-COLUMN NAME
-TYPE
-CONSTRAINT
-DESCRIPTION
-1
+Section creation time
+📌 Supports unlimited repeatable sections within template rules.
+📄 Sheet 6: asset_mappings
+Column Name
+Data Type
+Constraint
+Description
 asset_id
 VARCHAR(100)
-PRIMARY KEY
+Primary Key
 Application context identifier
-2
 content_id
 INTEGER
-FOREIGN KEY
+Foreign Key
 References contents(content_id)
 📌 Many AssetIds → One ContentId supported.
-Table: session_mappings
-Description: Maps session identifiers to content sections for navigation.
-ID
-COLUMN NAME
-TYPE
-CONSTRAINT
-DESCRIPTION
-1
+📄 Sheet 7: session_mappings
+Column Name
+Data Type
+Constraint
+Description
 session_id
 VARCHAR(100)
-PRIMARY KEY
+Primary Key
 Session identifier
-2
 section_id
 VARCHAR(100)
-FOREIGN KEY
+Foreign Key
 References content_sections(section_id)
-3
 content_id
 INTEGER
-FOREIGN KEY
+Foreign Key
 References contents(content_id)
-📌 SessionId → Content Section → Auto-scroll handled by UI.
-Table: audit_logs
-Description: Maintains audit trail of documentation lifecycle actions.
-ID
-COLUMN NAME
-TYPE
-CONSTRAINT
-DESCRIPTION
-1
+📌 SessionId maps to content-level sections for contextual navigation.
+📄 Sheet 8: audit_logs
+Column Name
+Data Type
+Constraint
+Description
 audit_id
 INTEGER
-PRIMARY KEY
-Audit record ID
-2
+Primary Key
+Audit record identifier
 content_id
 INTEGER
-FOREIGN KEY
+Foreign Key
 References contents(content_id)
-3
 action
 VARCHAR(50)
 NOT NULL
 Action performed
-4
-performed_by
-INTEGER
-FOREIGN KEY
-References users(user_id)
-5
 performed_at
 TIMESTAMP
 NOT NULL
 Action timestamp
-🔑 DESIGN GUARANTEES (Explain this confidently)
+📌 User identity can be captured as metadata if passed by external systems.
+✅ WHAT THIS DESIGN NOW GUARANTEES
 Requirement
-How schema supports it
+How it’s handled
+API-only system
+No user table
+External auth
+Assumed via headers/tokens
+Template version safety
+template_versions
 Unlimited sections
-content_sections table
-Template rules only
-template_versions.schema_json
-No retro break
-content → template_version
-One active draft
-enforced at service + DB index
+content_sections
 Auto-scroll
 session_mappings
 Contextual help
 asset_mappings
 Version history
 content_versions
-🧠 ONE-LINE SUMMARY (MEMORIZE)
-“Templates define structural rules, content creates dynamic section instances, and session identifiers map to those sections for contextual navigation.”
+🧠 ONE-LINE EXPLANATION (FOR REVIEW / VIVA)
+“The CCMS is API-only and content-focused; authentication and authorization are handled externally, while the CMS manages templates, versions, dynamic sections, and contextual navigation.”
 If you want next, I can:
 Provide DDL SQL for this exact schema
-Draw a simple ER explanation
-Optimize this for exam vs production
-Reduce to MVP-only tables
+Optimize indexes for read-heavy usage
+Reduce this to MVP tables only
+Prepare diagram explanation in words
 Just tell me 👍
