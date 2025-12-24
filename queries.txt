@@ -1,0 +1,15 @@
+Queries	Clarifications
+1) Will the documentation have files/Images?	 Initial stage just Markdown.
+2) Who can create new templates?	 RBAC out of scope
+3) What counts as new version? Every save or Only when published.	 Published counts as new version
+4) How does an application identify which documentation to fetch? If by assetID should I worry about how to get the assetID.	 Have columns for assetID, assetType, contentID. relationship : assetID to contentID is many to one
+5) Should users be able to view older versions or just the latest ones.	 Users view only the latest version.
+6) Should rollback be immediate or it creates new draft.	 Rollback is immediate but new version is created.
+7) Can two versions be in Published state simultaneously.	 Yes, but only the latest version will be visible.
+8) While deleting content is the state changed to Deprecated and when should it be actually deleted.	 There can be hard delete and soft delete, soft delete moves the content to deprecated which is deleted over the buffered time.
+9) Can the same admin create and aprove the content?	 RBAC out of scope.
+10) What happens to the rejected content? Back to draft or Deleted or stays in review	 Give option to discard or to move back to draft.
+11) Is there a time limit for drafts in review?	  Draft is forever.
+12) Can drafts have incomplete metadata?	 Yes.
+13) What is the default output type?(HTML/JSON/Markdown)	 User can toggle between the outputs.
+14) Should the audit logs be viewable from the UI?	 Initial stage no need to worry about UI.
