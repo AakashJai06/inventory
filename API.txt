@@ -1,0 +1,217 @@
+1) Content Retrieval APIs (For Application Consumption)
+
+These APIs are used by client applications to retrieve documentation content in a headless manner.
+
+1.1 Get the Latest Published Content by Asset
+
+Endpoint : GET /api/v1/content/by-asset
+
+
+Description: Retrieves the latest published documentation mapped to a given asset identifier.
+	     The system resolves the provided assetId to the corresponding published contentId and returns the documentation content.
+
+Input:	assetId(required) – Identifier representing the application context
+	format(optional) – Desired response format (e.g: json, renderable)
+
+Output: Documentation Content
+	Metadata: contentId
+	  	  versionNumber
+	 	  templateId
+
+1.2 Get Contextual Content by Asset and Session
+
+Endpoint : GET /api/v1/content/by-asset-session
+
+
+Description: Retrieves documentation content for a given asset and resolves a specific section based on the session identifier.
+
+The system maps: assetId → contentId
+                 sessionId → sectionId
+
+Input: assetId (required)
+       sessionId (optional)
+       format (optional)
+
+Output: Documentation Content pointed to Specified Section
+	Metadata:contentId
+		 versionNumber
+
+2) Content Authoring APIs (For Creation and Modification of Content)
+
+These APIs support creation and modification of documentation content.
+
+2.1 Create Draft Documentation
+
+Endpoint : POST /api/v1/content
+
+
+Description: Creates a new documentation entry in draft state using a specified template version.
+	     Only one draft can exist at any given time.
+
+Input: templateId
+       templateVersionId
+
+Output: contentId
+	Initial status (DRAFT)
+
+2.2 Update Documentation Content
+
+Endpoint: PATCH /api/v1/content/{contentId}
+
+
+Description: Updates the documentation content JSON for a draft documentation entry.
+	     Updates are allowed only when the content is in DRAFT state.
+
+Input: contentJson
+
+Output: Updated documentation content
+
+3) Content Section APIs (Structure Management)
+
+These APIs manage the structural hierarchy of documentation.
+
+3.1 Create Documentation Sections
+
+Endpoint : POST /api/v1/content/{contentId}/sections
+
+
+Description: Creates the section hierarchy for the documentation based on the associated template.
+
+Input: Section definitions (sectionType, parentSectionId, order)
+
+Output: Created section identifiers
+
+3.2 Retrieve Documentation Sections
+
+Endpoint : GET /api/v1/content/{contentId}/sections
+
+Description: Retrieves all sections associated with a documentation entry in hierarchical order.
+
+Output: Section hierarchy
+
+4) Review Workflow APIs
+
+These APIs support review, approval, and rejection of documentation.
+
+4.1 Submit Documentation for Review
+
+Endpoint : POST /api/v1/content/{contentId}/submit-review
+
+
+Description: Transitions documentation from DRAFT to REVIEW state and records a submission entry in review history.
+
+Output: Updated status(REVIEW)
+
+4.2 Add Review Comment
+
+Endpoint : POST /api/v1/content/{contentId}/review/comment
+
+Description: Adds a review comment without changing the documentation status.
+
+Input : comment
+
+Output : Recorded review comment
+
+4.3 Approve Documentation
+
+Endpoint : POST /api/v1/content/{contentId}/review/approve
+
+
+Description : Approves the documentation and transitions it to PUBLISHED state.
+
+Output : Updated status (PUBLISHED)
+
+4.4 Reject Documentation
+
+Endpoint : POST /api/v1/content/{contentId}/review/reject
+
+
+Description : Rejects the documentation, transitions it back to DRAFT, and records reviewer comments.
+
+Input : comment
+
+Output : Updated status (DRAFT)
+
+4.5 Retrieve Review History
+
+Endpoint: GET /api/v1/content/{contentId}/review-history
+
+
+Description: Retrieves the complete review history timeline for a documentation entry.
+
+Output: List of review actions with reviewer, comment, and timestamp
+
+5) Asset Mapping APIs
+
+These APIs map application contexts to documentation.
+
+5.1 Map Asset to Documentation
+
+Endpoint: PUT /api/v1/asset/{assetId}
+
+Description: Maps an asset identifier to a published documentation entry.
+
+Input: contentId
+
+Output: Asset-to-content mapping confirmation
+
+5.2 Retrieve Asset Mapping
+
+Endpoint: GET /api/v1/asset/{assetId}
+
+Description: Retrieves the documentation mapped to a specific asset.
+
+Output: contentId
+	Version metadata
+
+6) Session Mapping APIs
+
+These APIs enable section-level contextual navigation.
+
+6.1 Create Session Mapping
+
+Endpoint: POST /api/v1/session
+
+
+Description: Maps a session identifier (UI context) to a specific documentation section.
+
+Input:  sessionId
+	sectionId
+	contentId
+
+Output: Session mapping confirmation
+
+6.2 Retrieve Session Mapping
+
+Endpoint: GET /api/v1/session/{sessionId}
+
+
+Description: Retrieves the section mapped to a given session identifier.
+
+Output: sectionId
+	contentId
+
+7) Versioning & Rollback APIs
+
+7.1 Rollback Published Documentation
+
+Endpoint: POST /api/v1/content/{contentId}/rollback
+
+
+Description: Creates a new content version using a previously published version and remaps assets accordingly.
+
+Output: New contentId
+	Updated asset mappings	
+
+8) Audit APIs
+
+8.1 Retrieve Content Audit Logs
+
+Endpoint: GET /api/v1/audit/content
+
+
+Description: Retrieves lifecycle audit events for documentation, including publish and rollback actions.
+
+Input: contentId
+
+Output: Audit event list
